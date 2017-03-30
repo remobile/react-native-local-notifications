@@ -21,15 +21,15 @@
  * @APPPLANT_LICENSE_HEADER_END@
  */
 
-var exec = require('@remobile/react-native-cordova').exec;
-var {Platform} = require('react-native');
+const exec = require('@remobile/react-native-cordova').exec;
+const { Platform } = require('react-native');
 
 /***********
  * MEMBERS *
  ***********/
 
 // Default values
-exports._defaults = Platform.OS==='android' ? {
+exports._defaults = Platform.OS === 'android' ? {
     icon:  'res://ic_popup_reminder',
     smallIcon: undefined,
     ongoing: false,
@@ -42,7 +42,7 @@ exports._defaults = Platform.OS==='android' ? {
     id:    0,
     data:  undefined,
     every: undefined,
-    at:    undefined
+    at:    undefined,
 } : {
     text:  '',
     title: '',
@@ -51,13 +51,12 @@ exports._defaults = Platform.OS==='android' ? {
     id:    0,
     data:  undefined,
     every: undefined,
-    at:    undefined
+    at:    undefined,
 };
 
 // listener
 exports._listener = {};
 exports._subscription = {};
-
 
 /********
  * UTIL *
@@ -73,9 +72,9 @@ exports._subscription = {};
  *      The merged property list
  */
 exports.mergeWithDefaults = function (options) {
-    var defaults = this.getDefaults();
+    const defaults = this.getDefaults();
 
-    options.at   = this.getValueFor(options, 'at', 'firstAt', 'date');
+    options.at = this.getValueFor(options, 'at', 'firstAt', 'date');
     options.text = this.getValueFor(options, 'text', 'message');
     options.data = this.getValueFor(options, 'data', 'json');
 
@@ -91,9 +90,10 @@ exports.mergeWithDefaults = function (options) {
         options.at = new Date();
     }
 
-    for (var key in defaults) {
+    let key;
+    for (key in defaults) {
         if (options[key] === null || options[key] === undefined) {
-            if (options.hasOwnProperty(key) && ['data','sound'].indexOf(key) > -1) {
+            if (options.hasOwnProperty(key) && ['data', 'sound'].indexOf(key) > -1) {
                 options[key] = undefined;
             } else {
                 options[key] = defaults[key];
@@ -121,7 +121,6 @@ exports.mergeWithDefaults = function (options) {
  *      The converted property list
  */
 exports.convertProperties = function (options) {
-
     if (options.id) {
         if (isNaN(options.id)) {
             options.id = this.getDefaults().id;
@@ -136,7 +135,7 @@ exports.convertProperties = function (options) {
     }
 
     if (options.text) {
-        options.text  = options.text.toString();
+        options.text = options.text.toString();
     }
 
     if (options.badge) {
@@ -153,7 +152,7 @@ exports.convertProperties = function (options) {
             options.at = options.at.getTime();
         }
 
-        options.at = Math.round(options.at/1000);
+        options.at = Math.round(options.at / 1000);
     }
 
     if (typeof options.data == 'object') {
@@ -175,9 +174,7 @@ exports.convertProperties = function (options) {
  *      The new callback function
  */
 exports.createCallbackFn = function (callbackFn, scope) {
-
-    if (typeof callbackFn != 'function')
-        return;
+    if (typeof callbackFn != 'function') { return; }
 
     return function () {
         callbackFn.apply(scope || this, arguments);
@@ -192,9 +189,9 @@ exports.createCallbackFn = function (callbackFn, scope) {
  * @return Array of Numbers
  */
 exports.convertIds = function (ids) {
-    var convertedIds = [];
+    const convertedIds = [];
 
-    for (var i = 0; i < ids.length; i++) {
+    for (let i = 0; i < ids.length; i++) {
         convertedIds.push(Number(ids[i]));
     }
 
@@ -210,10 +207,10 @@ exports.convertIds = function (ids) {
  *      Key list
  */
 exports.getValueFor = function (options) {
-    var keys = Array.apply(null, arguments).slice(1);
+    const keys = Array.apply(null, arguments).slice(1);
 
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
 
         if (options.hasOwnProperty(key)) {
             return options[key];
@@ -230,14 +227,13 @@ exports.getValueFor = function (options) {
  *      The callback's arguments
  */
 exports.fireEvent = function (event) {
-    var args     = Array.apply(null, arguments).slice(1),
+    const args = Array.apply(null, arguments).slice(1),
         listener = this._listener[event];
 
-    if (!listener)
-        return;
+    if (!listener) { return; }
 
-    for (var i = 0; i < listener.length; i++) {
-        var fn    = listener[i][0],
+    for (let i = 0; i < listener.length; i++) {
+        const fn = listener[i][0],
             scope = listener[i][1];
 
         fn.apply(scope, args);
@@ -257,8 +253,8 @@ exports.fireEvent = function (event) {
  *      The scope for the function
  */
 exports.exec = function (action, args, callback, scope) {
-    var fn = this.createCallbackFn(callback, scope),
-        params = [];
+    const fn = this.createCallbackFn(callback, scope);
+    let params = [];
 
     if (Array.isArray(args)) {
         params = args;
@@ -268,7 +264,6 @@ exports.exec = function (action, args, callback, scope) {
 
     exec(fn, null, 'LocalNotification', action, params);
 };
-
 
 /*********
  * HOOKS *

@@ -1,5 +1,5 @@
 'use strict';
 
-var LocalNotification = require('./libs/local-notification.js');
+const LocalNotification = require('./libs/local-notification.js');
 
 module.exports = LocalNotification;

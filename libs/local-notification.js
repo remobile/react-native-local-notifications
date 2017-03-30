@@ -21,12 +21,11 @@
  * @APPPLANT_LICENSE_HEADER_END@
  */
 
-
 /*************
  * INTERFACE *
  *************/
 
-var core = require('./local-notification-core.js');
+const core = require('./local-notification-core.js');
 /**
  * Returns the default settings.
  *
@@ -315,7 +314,6 @@ exports.registerPermission = function (callback, scope) {
     core.registerPermission(callback, scope);
 };
 
-
 /****************
  * DEPRECATIONS *
  ****************/
@@ -338,7 +336,6 @@ exports.promptForPermission = function () {
 
     this.registerPermission.apply(this, arguments);
 };
-
 
 /**********
  * EVENTS *
@@ -367,5 +364,5 @@ exports.on = function (event, callback, scope) {
  *      The function to be exec as callback
  */
 exports.un = function (event, callback) {
-    core.un(event, callback, scope);
+    core.un(event, callback);
 };

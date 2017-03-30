@@ -21,10 +21,10 @@
  * @APPPLANT_LICENSE_HEADER_END@
  */
 
-var exec = require('@remobile/react-native-cordova').exec;
-var util = require('./local-notification-util.js');
-var {NativeAppEventEmitter, DeviceEventEmitter, Platform} = require('react-native');
-var EventEmitter = Platform.OS==="android"?DeviceEventEmitter:NativeAppEventEmitter;
+const exec = require('@remobile/react-native-cordova').exec;
+const util = require('./local-notification-util.js');
+const { NativeAppEventEmitter, DeviceEventEmitter, Platform } = require('react-native');
+const EventEmitter = Platform.OS === 'android' ? DeviceEventEmitter : NativeAppEventEmitter;
 exports = Object.assign(exports, util);
 
 /********
@@ -46,9 +46,9 @@ exports.getDefaults = function () {
  * @param {Object} defaults
  */
 exports.setDefaults = function (newDefaults) {
-    var defaults = this.getDefaults();
+    const defaults = this.getDefaults();
 
-    for (var key in defaults) {
+    for (const key in defaults) {
         if (newDefaults.hasOwnProperty(key)) {
             defaults[key] = newDefaults[key];
         }
@@ -66,14 +66,13 @@ exports.setDefaults = function (newDefaults) {
  *      The scope for the callback function
  */
 exports.schedule = function (opts, callback, scope) {
-    this.registerPermission(function(granted) {
-        if (!granted)
-            return;
+    this.registerPermission(function (granted) {
+        if (!granted) { return; }
 
-        var notifications = Array.isArray(opts) ? opts : [opts];
+        const notifications = Array.isArray(opts) ? opts : [opts];
 
-        for (var i = 0; i < notifications.length; i++) {
-            var properties = notifications[i];
+        for (let i = 0; i < notifications.length; i++) {
+            const properties = notifications[i];
 
             this.mergeWithDefaults(properties);
             this.convertProperties(properties);
@@ -94,10 +93,10 @@ exports.schedule = function (opts, callback, scope) {
  *      The scope for the callback function
  */
 exports.update = function (opts, callback, scope) {
-    var notifications = Array.isArray(opts) ? opts : [opts];
+    const notifications = Array.isArray(opts) ? opts : [opts];
 
-    for (var i = 0; i < notifications.length; i++) {
-        var properties = notifications[i];
+    for (let i = 0; i < notifications.length; i++) {
+        const properties = notifications[i];
 
         this.convertProperties(properties);
     }
@@ -260,15 +259,15 @@ exports.getTriggeredIds = function (callback, scope) {
  *      The scope for the callback function
  */
 exports.get = function () {
-    var args = Array.apply(null, arguments);
+    const args = Array.apply(null, arguments);
 
     if (typeof args[0] == 'function') {
         args.unshift([]);
     }
 
-    var ids      = args[0],
+    let ids = args[0],
         callback = args[1],
-        scope    = args[2];
+        scope = args[2];
 
     if (!Array.isArray(ids)) {
         this.exec('getSingle', Number(ids), callback, scope);
@@ -304,15 +303,15 @@ exports.getAll = function (callback, scope) {
  *      The scope for the callback function
  */
 exports.getScheduled = function () {
-    var args = Array.apply(null, arguments);
+    const args = Array.apply(null, arguments);
 
     if (typeof args[0] == 'function') {
         args.unshift([]);
     }
 
-    var ids      = args[0],
+    let ids = args[0],
         callback = args[1],
-        scope    = args[2];
+        scope = args[2];
 
     if (!Array.isArray(ids)) {
         ids = [ids];
@@ -352,15 +351,15 @@ exports.getAllScheduled = function (callback, scope) {
  *      The scope for the callback function
  */
 exports.getTriggered = function () {
-    var args = Array.apply(null, arguments);
+    const args = Array.apply(null, arguments);
 
     if (typeof args[0] == 'function') {
         args.unshift([]);
     }
 
-    var ids      = args[0],
+    let ids = args[0],
         callback = args[1],
-        scope    = args[2];
+        scope = args[2];
 
     if (!Array.isArray(ids)) {
         ids = [ids];
@@ -397,7 +396,7 @@ exports.getAllTriggered = function (callback, scope) {
  *      The callback function's scope
  */
 exports.hasPermission = function (callback, scope) {
-    var fn = this.createCallbackFn(callback, scope);
+    const fn = this.createCallbackFn(callback, scope);
 
     if (Platform.OS != 'ios') {
         fn(true);
@@ -416,7 +415,7 @@ exports.hasPermission = function (callback, scope) {
  *      The callback function's scope
  */
 exports.registerPermission = function (callback, scope) {
-    var fn = this.createCallbackFn(callback, scope);
+    const fn = this.createCallbackFn(callback, scope);
 
     if (Platform.OS != 'ios') {
         fn(true);
@@ -425,7 +424,6 @@ exports.registerPermission = function (callback, scope) {
 
     exec(fn, null, 'LocalNotification', 'registerPermission', []);
 };
-
 
 /**********
  * EVENTS *
@@ -443,8 +441,8 @@ exports.registerPermission = function (callback, scope) {
  */
 exports.on = function (event, callback, scope) {
     if (!this._subscription[event]) {
-        this._subscription[event] = EventEmitter.addListener('RCT-LOCAL-NOTIFICATION-'+event, function(params){
-            console.log("[========]", event, params);
+        this._subscription[event] = EventEmitter.addListener('RCT-LOCAL-NOTIFICATION-' + event, function (params) {
+            console.log('[========]', event, params);
             exports.fireEvent(event, params);
         });
     }
@@ -453,7 +451,7 @@ exports.on = function (event, callback, scope) {
         this._listener[event] = [];
     }
 
-    var item = [callback, scope];
+    const item = [callback, scope];
 
     this._listener[event].push(item);
 };
@@ -467,18 +465,17 @@ exports.on = function (event, callback, scope) {
  *      The function to be exec as callback
  */
 exports.un = function (event, callback) {
-    var listener = this._listener[event];
-    var subscription = this._subscription[event];
+    const listener = this._listener[event];
+    const subscription = this._subscription[event];
     if (subscription) {
         subscription.remove();
         delete this._subscription[event];
     }
 
-    if (!listener)
-        return;
+    if (!listener) { return; }
 
-    for (var i = 0; i < listener.length; i++) {
-        var fn = listener[i][0];
+    for (let i = 0; i < listener.length; i++) {
+        const fn = listener[i][0];
 
         if (fn == callback) {
             listener.splice(i, 1);
